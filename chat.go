@@ -105,6 +105,11 @@ type ChatMessagePart struct {
 	VideoURL   *ChatMessageVideoURL   `json:"video_url,omitempty"`
 }
 
+type CacheControl struct {
+	// Only support "ephemeral" for now
+	Type string `json:"type"`
+}
+
 type ChatCompletionMessage struct {
 	Role         string `json:"role"`
 	Content      string `json:"content,omitempty"`
@@ -124,6 +129,12 @@ type ChatCompletionMessage struct {
 
 	// For Role=tool prompts this should be set to the ID given in the assistant's prior request to call a tool.
 	ToolCallID string `json:"tool_call_id,omitempty"`
+
+	// Cache control for anthropic models: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
+	// Due to the automatic prompt caching mechanism implemented in GPT series models,
+	// this field value is ignored during GPT model execution.
+	// For more details, please refer to the official documentation: https://platform.openai.com/docs/guides/prompt-caching
+	CacheControl *CacheControl `json:"cache_control,omitempty"`
 }
 
 func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
@@ -140,6 +151,7 @@ func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
 			FunctionCall *FunctionCall     `json:"function_call,omitempty"`
 			ToolCalls    []ToolCall        `json:"tool_calls,omitempty"`
 			ToolCallID   string            `json:"tool_call_id,omitempty"`
+			CacheControl *CacheControl     `json:"cache_control,omitempty"`
 		}(m)
 		return json.Marshal(msg)
 	}
@@ -153,6 +165,7 @@ func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
 		FunctionCall *FunctionCall     `json:"function_call,omitempty"`
 		ToolCalls    []ToolCall        `json:"tool_calls,omitempty"`
 		ToolCallID   string            `json:"tool_call_id,omitempty"`
+		CacheControl *CacheControl     `json:"cache_control,omitempty"`
 	}(m)
 	return json.Marshal(msg)
 }
@@ -167,6 +180,7 @@ func (m *ChatCompletionMessage) UnmarshalJSON(bs []byte) error {
 		FunctionCall *FunctionCall `json:"function_call,omitempty"`
 		ToolCalls    []ToolCall    `json:"tool_calls,omitempty"`
 		ToolCallID   string        `json:"tool_call_id,omitempty"`
+		CacheControl *CacheControl `json:"cache_control,omitempty"`
 	}{}
 
 	if err := json.Unmarshal(bs, &msg); err == nil {
@@ -182,6 +196,7 @@ func (m *ChatCompletionMessage) UnmarshalJSON(bs []byte) error {
 		FunctionCall *FunctionCall     `json:"function_call,omitempty"`
 		ToolCalls    []ToolCall        `json:"tool_calls,omitempty"`
 		ToolCallID   string            `json:"tool_call_id,omitempty"`
+		CacheControl *CacheControl     `json:"cache_control,omitempty"`
 	}{}
 	if err := json.Unmarshal(bs, &multiMsg); err != nil {
 		return err
@@ -295,6 +310,12 @@ const (
 type Tool struct {
 	Type     ToolType            `json:"type"`
 	Function *FunctionDefinition `json:"function,omitempty"`
+
+	// Cache control for anthropic models: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
+	// Due to the automatic prompt caching mechanism implemented in GPT series models,
+	// this field value is ignored during GPT model execution.
+	// For more details, please refer to the official documentation: https://platform.openai.com/docs/guides/prompt-caching
+	CacheControl *CacheControl `json:"cache_control,omitempty"`
 }
 
 type ToolChoice struct {

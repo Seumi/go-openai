@@ -9,6 +9,13 @@ type Usage struct {
 	TotalTokens             int                      `json:"total_tokens"`
 	PromptTokensDetails     *PromptTokensDetails     `json:"prompt_tokens_details"`
 	CompletionTokensDetails *CompletionTokensDetails `json:"completion_tokens_details"`
+
+	// CachedCreationTokens is the number of tokens written to the cache when creating a new entry.
+	// Corresponds to "cache_creation_input_tokens" in Anthropic.
+	CacheCreationInputTokens int `json:"cache_creation_input_tokens"`
+	// CachedReadInputTokens is the number of tokens retrieved from the cache for this request.
+	// Corresponds to "cached_tokens" in OpenAI and "cache_read_input_tokens" in Anthropic.
+	CacheReadInputTokens int `json:"cache_read_input_tokens"`
 }
 
 // CompletionTokensDetails Breakdown of tokens used in a completion.
