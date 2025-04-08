@@ -95,6 +95,10 @@ func (c *Client) CreateChatCompletionStream(
 		return nil, err
 	}
 
+	for k, v := range request.ExtraHeader {
+		req.Header.Set(k, v)
+	}
+
 	resp, err := sendRequestStream[ChatCompletionStreamResponse](c, req)
 	if err != nil {
 		return

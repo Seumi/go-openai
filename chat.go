@@ -291,6 +291,10 @@ type ChatCompletionRequest struct {
 	ReasoningEffort string `json:"reasoning_effort,omitempty"`
 	// Metadata to store with the completion.
 	Metadata map[string]string `json:"metadata,omitempty"`
+	// ExtraHeader
+	ExtraHeader map[string]string `json:"extra_header,omitempty"`
+	// AnthropicBeta
+	AnthropicBeta []string `json:"anthropic_beta,omitempty"`
 }
 
 type StreamOptions struct {
@@ -440,6 +444,10 @@ func (c *Client) CreateChatCompletion(
 	)
 	if err != nil {
 		return
+	}
+
+	for k, v := range request.ExtraHeader {
+		req.Header.Set(k, v)
 	}
 
 	err = c.sendRequest(req, &response)
