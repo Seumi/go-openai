@@ -2,7 +2,10 @@ package openai
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+
+	"github.com/moul/http2curl"
 )
 
 type ChatCompletionStreamChoiceDelta struct {
@@ -97,6 +100,13 @@ func (c *Client) CreateChatCompletionStream(
 
 	for k, v := range request.ExtraHeader {
 		req.Header.Set(k, v)
+	}
+
+	if request.Verbose {
+		command, err := http2curl.GetCurlCommand(req)
+		if err == nil {
+			fmt.Println(command.String())
+		}
 	}
 
 	resp, err := sendRequestStream[ChatCompletionStreamResponse](c, req)
