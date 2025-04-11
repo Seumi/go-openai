@@ -37,8 +37,6 @@ func (stream *streamReader[T]) Recv() (response T, err error) {
 		return
 	}
 
-	fmt.Println(string(rawLine))
-
 	err = stream.unmarshaler.Unmarshal(rawLine, &response)
 	if err != nil {
 		return
